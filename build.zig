@@ -1,27 +1,53 @@
 const std = @import("std");
+const builtin = @import("builtin");
 
 pub fn build(b: *std.build.Builder) void {
-    // Standard target options allows the person running `zig build` to choose
-    // what target to build for. Here we do not override the defaults, which
-    // means any target is allowed, and the default is native. Other options
-    // for restricting supported target set are available.
-    const target = b.standardTargetOptions(.{});
 
-    // Standard release options allow the person running `zig build` to select
-    // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall.
+    // RiscV-64 freestanding target
+
+    // Work around to eliminate 'D' feature, see https://github.com/ziglang/zig/issues/9760
+    var sub_set = std.Target.Cpu.Feature.Set.empty;
+    const d: std.Target.riscv.Feature = .d;
+    sub_set.addFeature(@enumToInt(d));
+    const target = std.zig.CrossTarget{
+        .cpu_arch = std.Target.Cpu.Arch.riscv64,
+        .os_tag = std.Target.Os.Tag.freestanding,
+        .abi = std.Target.Abi.none,
+        .cpu_features_sub = sub_set,
+    };
+
     const mode = b.standardReleaseOptions();
 
-    const exe = b.addExecutable("zesty-core", "src/main.zig");
-    exe.setTarget(target);
-    exe.setBuildMode(mode);
-    exe.install();
+    // Kernel
+    const kernel = b.addExecutable("zesty-core", "src/main.zig");
+    kernel.addAssemblyFile("src/arch/riscv64/_start.S");
+    kernel.setTarget(target);
+    kernel.setOutputDir("build/");
+    kernel.setBuildMode(mode);
+    kernel.setLinkerScriptPath("src/arch/riscv64/linker.ld");
 
-    const run_cmd = exe.run();
-    run_cmd.step.dependOn(b.getInstallStep());
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
-    }
+    // Work around for https://www.sifive.com/blog/all-aboard-part-4-risc-v-code-models
+    // see https://github.com/ziglang/zig/issues/5558
+    kernel.code_model = .medium;
 
-    const run_step = b.step("run", "Run the app");
-    run_step.dependOn(&run_cmd.step);
+    b.default_step.dependOn(&kernel.step);
+
+    // QEMU
+    const qemu_params = [_][]const u8{
+        "qemu-system-riscv64",
+        "-machine",
+        "virt",
+        "-nographic",
+        "-bios",
+        "default",
+        "-smp",
+        "2", // CPUS
+        "-kernel",
+        kernel.getOutputPath(),
+    };
+
+    const qemu = b.addSystemCommand(&qemu_params);
+    qemu.step.dependOn(b.default_step);
+    const run_step = b.step("run", "Run the kernel with QEMU");
+    run_step.dependOn(&qemu.step);
 }
