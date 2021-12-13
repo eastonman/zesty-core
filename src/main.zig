@@ -19,7 +19,8 @@ export fn zig_main() noreturn {
     while (true) {}
 }
 
-// Define root.log to override the std implementation
+/// Implement root.log to override the std implementation
+/// See https://github.com/ziglang/zig/blob/0.8.x/lib/std/log.zig#L31-L54
 pub fn log(
     comptime level: std.log.Level,
     comptime scope: @TypeOf(.EnumLiteral),
@@ -49,6 +50,7 @@ fn hang() noreturn {
     while (true) {}
 }
 
+/// Implement root.panic to overide the std implementation
 pub fn panic(message: []const u8, stack_trace: ?*builtin.StackTrace) noreturn {
     @setCold(true);
 
