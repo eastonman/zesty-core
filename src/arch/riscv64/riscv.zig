@@ -1,26 +1,46 @@
 /// Risc-V architecture related code
 
+// Builtin is available
+const builtin = @import("builtin");
+
 // Page size 4k
 pub const PAGE_SIZE: usize = 4096;
+
+/// Memory layout
+///
+/// qemu -machine virt is set up like this,
+/// based on qemu's hw/riscv/virt.c:
+///
+/// 00001000 -- boot ROM, provided by qemu
+/// 02000000 -- CLINT
+/// 0C000000 -- PLIC
+/// 10000000 -- uart0
+/// 10001000 -- virtio disk
+/// 80000000 -- boot ROM jumps here in machine mode
+///             -kernel loads the kernel here
+/// unused RAM after 80000000.
+///
+/// the kernel uses physical memory thus:
+/// 80200000 -- entry.S, then kernel text and data
+/// end -- start of kernel page allocation area
+/// PHYSTOP -- end RAM used by the kernel
+const Memory_layout = struct {
+    UART0: usize = 0x1000_0000,
+};
+pub const memory_layout = Memory_layout{};
 
 pub inline fn __sync_synchronize() void {
     asm volatile ("fence");
 }
 
 // Atomic test&set
-pub inline fn __sync_lock_test_and_set(a: *u32, b: u32) u32 {
-    asm volatile ("amoswap.w.aq %[arg1], %[arg2], (%[arg3])"
-        : [ret] "=r" (-> usize)
-        : [arg1] "r" (b),
-          [arg2] "r" (b),
-          [arg3] "r" (a)
-    );
-    return b;
+pub inline fn __sync_lock_test_and_set(a: *usize, b: usize) usize {
+    return @atomicRmw(usize, a, .Xchg, b, .Acquire);
 }
 
 // Lock release, set *a to 0
-pub inline fn __sync_lock_release(a: *u32) void {
-    asm volatile ("amoswap.w zero,zero, (%[arg])"
+pub inline fn __sync_lock_release(a: *usize) void {
+    asm volatile ("amoswap.w zero, zero, (%[arg])"
         :
         : [arg] "r" (a)
     );
