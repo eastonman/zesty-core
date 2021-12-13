@@ -2,7 +2,7 @@
 
 > Zesty means we embrace new technology!
 >
-> Zesty begins with 'Z' which implies we are using Zig
+> Zesty begins with 'Z', which implies we are using Zig
 
 Zesty-Core is a kernel written in [Zig](https://ziglang.org/), aiming to compatible with POSIX.
 
@@ -16,13 +16,13 @@ By 2021-12-13, the upcoming Zig 0.9.0-dev is already breaking many std API and p
 
 ## Feature
 - [x] std.log and panic support
-- [] migrate to OpenSBI
-- [] clock interrupt
-- [] physical memory management
-- [] pagetable
-- [] proccess
-- [] proccess scheduling
-- [] syscall
+- [ ] migrate to OpenSBI
+- [ ] clock interrupt
+- [ ] physical memory management
+- [ ] pagetable
+- [ ] proccess
+- [ ] proccess scheduling
+- [ ] syscall
 
 ## Development
 
