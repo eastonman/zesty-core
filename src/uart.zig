@@ -1,5 +1,7 @@
 // UART Driver
 const Spinlock = @import("spinlock.zig").Spinlock;
+const fmt = @import("std").fmt;
+const io = @import("std").io;
 
 // the UART control registers.
 // some have different meanings for
@@ -86,3 +88,21 @@ pub const Uart = struct {
         }
     }
 };
+
+pub fn write(str: []const u8) void {
+    for (str) |v| {
+        uart.put(v);
+    }
+}
+
+const WriteError = error{};
+
+const Uart_Writer = io.Writer(void, WriteError, write_bytes);
+const Uart_writer = @as(Uart_Writer, .{ .context = {} });
+fn write_bytes(context: void, bytes: []const u8) WriteError!usize {
+    write(bytes);
+    return bytes.len;
+}
+pub fn print(comptime format: []const u8, args: anytype) void {
+    Uart_writer.print(format, args) catch return;
+}

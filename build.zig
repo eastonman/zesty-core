@@ -41,7 +41,7 @@ pub fn build(b: *std.build.Builder) void {
         "-bios",
         "default",
         "-smp",
-        "2", // CPUS
+        "4", // CPUS
         "-kernel",
         kernel.getOutputPath(),
     };
