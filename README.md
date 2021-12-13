@@ -15,8 +15,11 @@ Since Zig is still under development, the API of std library is not stablized, s
 By 2021-12-13, the upcoming Zig 0.9.0-dev is already breaking many std API and prevent the project from building.
 
 ## Feature
-- [x] std.log and panic support
+- [x] spinlock (2021-12-13)
+- [x] std.log and panic support (2021-12-13)
 - [ ] migrate to OpenSBI
+    - [ ] console related
+    - [ ] shutdown
 - [ ] clock interrupt
 - [ ] physical memory management
 - [ ] pagetable
