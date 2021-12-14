@@ -2,6 +2,7 @@
 
 const uart = @import("uart.zig");
 const arch = @import("arch/riscv64/riscv.zig");
+const sbi = @import("arch/riscv64/opensbi.zig");
 const debug = @import("debug.zig");
 const std = @import("std");
 const builtin = std.builtin;
@@ -13,6 +14,9 @@ export fn zig_main() noreturn {
     uart.uart.init();
     uart.write("\nKernel Booting...\n\n");
 
+    std.log.info("Hello, World!", .{});
+
+    sbi.shutdown();
     std.log.info("Hello, World!", .{});
 
     // No return
