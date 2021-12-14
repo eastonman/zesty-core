@@ -6,6 +6,12 @@ const builtin = @import("builtin");
 // Page size 4k
 pub const PAGE_SIZE: usize = 4096;
 
+// HZ value
+pub const HZ: usize = 100;
+
+// MAGIC number indicates the cpu freq
+pub const FREQ: usize = 1e7;
+
 /// Memory layout
 ///
 /// qemu -machine virt is set up like this,
@@ -48,6 +54,18 @@ pub inline fn __sync_lock_release(a: *usize) void {
 
 pub fn hart_id() usize {
     return asm volatile ("mv %[result], tp"
+        : [result] "=r" (-> usize)
+    );
+}
+
+pub fn get_time() usize {
+    return asm volatile ("rdtime %[result]"
+        : [result] "=r" (-> usize)
+    );
+}
+
+pub fn get_cycle() usize {
+    return asm volatile ("rdcycle %[result]"
         : [result] "=r" (-> usize)
     );
 }

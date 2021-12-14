@@ -4,7 +4,9 @@ const uart = @import("uart.zig");
 const arch = @import("arch/riscv64/riscv.zig");
 const sbi = @import("arch/riscv64/opensbi.zig");
 const debug = @import("debug.zig");
-const irq = @import("interrupt/handler.zig");
+const irq_handler = @import("interrupt/handler.zig");
+const irq = @import("interrupt/interrupt.zig");
+const clock = @import("clock.zig");
 const std = @import("std");
 const builtin = std.builtin;
 
@@ -13,14 +15,24 @@ export fn zig_main() noreturn {
     // Inital UART0
     uart.uart = uart.Uart.new(arch.memory_layout.UART0);
     uart.uart.init();
+
+    // Boot message
     uart.write("\nBooting Zesty-Core...\n\n");
 
-    std.log.info("Hello, World!", .{});
-    std.log.info("Enabling IRQ...", .{});
-    irq.init();
-    std.log.info("Enabled IRQ.", .{});
+    // No interrupt
+    irq.disable();
 
+    std.log.info("Initializing IRQ...", .{});
+    irq_handler.init();
+    clock.enable_clock_interrupt();
+    std.log.info("Clock IRQ initialized with {} Hz", .{arch.HZ});
+    std.log.info("Initialized IRQ.", .{});
+    sbi.set_timer(1); // Set next timer to something other than 0
+    // irq.enable();
+    std.log.info("IRQ enabled.", .{});
     asm volatile ("ebreak");
+
+    while (true) {}
 
     sbi.shutdown(); // No return for shutdown
 }

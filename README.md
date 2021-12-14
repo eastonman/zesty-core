@@ -39,7 +39,9 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
     - [ ] ~~console related~~ (SBI v0.1 feature, deprecated in SBI specification v0.2 and above)
     - [x] shutdown (2021-12-14)
     - [ ] hardware timer setup
-- [ ] clock interrupt
+- [ ] interrupt
+    - [x] interrupt handler setup (2021-12-14)
+    - [ ] clock interrupt
 - [ ] physical memory management
 - [ ] pagetable
 - [ ] proccess
