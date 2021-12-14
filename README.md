@@ -6,6 +6,8 @@
 
 Zesty-Core is a kernel written in [Zig](https://ziglang.org/), aiming to compatible with POSIX(May not be accomplished).
 
+Currently can only run on QEMU with `-machine virt`
+
 
 ## Build
 
@@ -35,13 +37,13 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
 ## Feature
 - [x] spinlock (2021-12-13)
 - [x] std.log and panic support (2021-12-13)
-- [ ] migrate to OpenSBI
+- [x] migrate to OpenSBI
     - [ ] ~~console related~~ (SBI v0.1 feature, deprecated in SBI specification v0.2 and above)
     - [x] shutdown (2021-12-14)
-    - [ ] hardware timer setup
-- [ ] interrupt
+    - [x] hardware timer setup
+- [x] interrupt
     - [x] interrupt handler setup (2021-12-14)
-    - [ ] clock interrupt
+    - [x] clock interrupt
 - [ ] physical memory management
 - [ ] pagetable
 - [ ] proccess
