@@ -37,7 +37,8 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
 - [x] std.log and panic support (2021-12-13)
 - [ ] migrate to OpenSBI
     - [ ] ~~console related~~ (SBI v0.1 feature, deprecated in SBI specification v0.2 and above)
-    - [x] shutdown
+    - [x] shutdown (2021-12-14)
+    - [ ] hardware timer setup
 - [ ] clock interrupt
 - [ ] physical memory management
 - [ ] pagetable
@@ -49,6 +50,10 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
 
 ### What can be used
 - std.log
+- @panic
+
+### What can not be used
+Pretty much anything else related to system.
 
 ## Credit
 - [https://github.com/AndreaOrru/zen](https://github.com/AndreaOrru/zen)

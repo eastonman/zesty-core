@@ -16,11 +16,7 @@ export fn zig_main() noreturn {
 
     std.log.info("Hello, World!", .{});
 
-    sbi.shutdown();
-    std.log.info("Hello, World!", .{});
-
-    // No return
-    while (true) {}
+    sbi.shutdown(); // No return for shutdown
 }
 
 /// Implement root.log to override the std implementation
