@@ -1,5 +1,7 @@
 //! SBI wrapper
 
+const std = @import("std");
+
 /// 2.Binray Encoding
 /// According to SBI doc
 pub const SBI_RET = struct {
@@ -24,8 +26,8 @@ inline fn sbi_call(
         : [eid] "{x17}" (eid), // a7 for EID
           [fid] "{x16}" (fid), // a6 for FID
           [arg0] "{x10}" (arg0),
-          [arg1] "{x10}" (arg1),
-          [arg2] "{x10}" (arg2)
+          [arg1] "{x11}" (arg1),
+          [arg2] "{x12}" (arg2)
         : "memory"
     );
 
@@ -42,8 +44,8 @@ const TIME_SET_TIMER_FID: i32 = 0x0;
 
 /// set next clock interrupt
 /// not expecting any error
-pub fn set_timer(interval: u64) void {
-    _ = sbi_call(TIME_EID, TIME_SET_TIMER_FID, interval, 0, 0);
+pub fn set_timer(time: u64) void {
+    _ = sbi_call(TIME_EID, TIME_SET_TIMER_FID, time, 0, 0);
 }
 
 /// 9. System Reset Extension (EID #0x53525354 "SRST")
