@@ -43,7 +43,7 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
     - [x] hardware timer setup
 - [x] interrupt
     - [x] interrupt handler setup (2021-12-14)
-    - [x] clock interrupt
+    - [x] clock interrupt (2021-12-14)
 - [ ] physical memory management
 - [ ] pagetable
 - [ ] proccess
