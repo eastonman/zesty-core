@@ -24,4 +24,4 @@ jobs:
       - uses: goto-bus-stop/setup-zig@v1
         with:
           version: 0.8.1
-      - run: zig build test
+      - run: zig build

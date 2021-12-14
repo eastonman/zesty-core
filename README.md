@@ -4,7 +4,7 @@
 >
 > Zesty begins with 'Z', which implies we are using Zig
 
-Zesty-Core is a kernel written in [Zig](https://ziglang.org/), aiming to compatible with POSIX.
+Zesty-Core is a kernel written in [Zig](https://ziglang.org/), aiming to compatible with POSIX(May not be accomplished).
 
 
 ## Build
