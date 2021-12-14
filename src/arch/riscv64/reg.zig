@@ -7,6 +7,19 @@ pub inline fn w_sstatus(a: usize) void {
     );
 }
 
+pub fn clr_sstatus(a: usize) void {
+    asm volatile ("csrc sstatus, %[arg1]"
+        :
+        : [arg1] "r" (a)
+    );
+}
+pub fn set_sstatus(a: usize) void {
+    asm volatile ("csrs sstatus, %[arg1]"
+        :
+        : [arg1] "r" (a)
+    );
+}
+
 pub inline fn r_sstatus() usize {
     return asm volatile ("csrr %[ret], sstatus"
         : [ret] "=r" (-> usize)

@@ -12,6 +12,9 @@ const builtin = std.builtin;
 
 export fn zig_main() noreturn {
 
+    // No interrupt during initialization
+    irq.disable();
+
     // Inital UART0
     uart.uart = uart.Uart.new(arch.memory_layout.UART0);
     uart.uart.init();
@@ -19,17 +22,19 @@ export fn zig_main() noreturn {
     // Boot message
     uart.write("\nBooting Zesty-Core...\n\n");
 
-    // No interrupt
-    irq.disable();
-
+    // Initial interrupt handling
     std.log.info("Initializing IRQ...", .{});
-    irq_handler.init();
-    clock.enable_clock_interrupt();
+    irq_handler.init(); // Interrupt Vector
+
+    clock.enable_clock_interrupt(); // Accept timer interrupt
     std.log.info("Clock IRQ initialized with {} Hz", .{arch.HZ});
+
+    // Done initializing interrupt
     std.log.info("Initialized IRQ.", .{});
-    sbi.set_timer(1); // Set next timer to something other than 0
-    // irq.enable();
+    sbi.set_timer(1); // Set next timer to something other than 0 to activate timer
+    irq.enable();
     std.log.info("IRQ enabled.", .{});
+
     asm volatile ("ebreak");
 
     while (true) {}
