@@ -21,6 +21,7 @@ pub fn build(b: *std.build.Builder) void {
     // Kernel
     const kernel = b.addExecutable("zesty-core", "src/main.zig");
     kernel.addAssemblyFile("src/arch/riscv64/_start.S");
+    kernel.addAssemblyFile("src/arch/riscv64/handler.S");
     kernel.setTarget(target);
     kernel.setOutputDir("build/");
     kernel.setBuildMode(mode);

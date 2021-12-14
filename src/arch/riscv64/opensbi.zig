@@ -1,4 +1,4 @@
-//! OpenSBI interface
+//! SBI wrapper
 
 /// 2.Binray Encoding
 /// According to SBI doc
@@ -33,6 +33,17 @@ inline fn sbi_call(
         .err = err,
         .val = val,
     };
+}
+
+/// 5. Timer Extension (EID #0x54494D45 "TIME")
+/// Available since SBI v0.2
+const TIME_EID: i32 = 0x54494D45;
+const TIME_SET_TIMER_FID: i32 = 0x0;
+
+/// set next clock interrupt
+/// not expecting any error
+pub fn set_timer(interval: u64) void {
+    _ = sbi_call(TIME_EID, TIME_SET_TIMER_FID, interval, 0, 0);
 }
 
 /// 9. System Reset Extension (EID #0x53525354 "SRST")

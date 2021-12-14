@@ -4,6 +4,7 @@ const uart = @import("uart.zig");
 const arch = @import("arch/riscv64/riscv.zig");
 const sbi = @import("arch/riscv64/opensbi.zig");
 const debug = @import("debug.zig");
+const irq = @import("interrupt/handler.zig");
 const std = @import("std");
 const builtin = std.builtin;
 
@@ -12,9 +13,14 @@ export fn zig_main() noreturn {
     // Inital UART0
     uart.uart = uart.Uart.new(arch.memory_layout.UART0);
     uart.uart.init();
-    uart.write("\nKernel Booting...\n\n");
+    uart.write("\nBooting Zesty-Core...\n\n");
 
     std.log.info("Hello, World!", .{});
+    std.log.info("Enabling IRQ...", .{});
+    irq.init();
+    std.log.info("Enabled IRQ.", .{});
+
+    asm volatile ("ebreak");
 
     sbi.shutdown(); // No return for shutdown
 }

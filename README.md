@@ -58,6 +58,7 @@ Pretty much anything else related to system.
 ## Credit
 - [https://github.com/AndreaOrru/zen](https://github.com/AndreaOrru/zen)
 - [https://github.com/rcore-os/rCore](https://github.com/rcore-os/rCore)
+- [https://github.com/mit-pdos/xv6-riscv](https://github.com/mit-pdos/xv6-riscv) xv6 from MIT re-written for RISC-V
 
 ## License
 AGPL v3.0
