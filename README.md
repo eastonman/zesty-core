@@ -36,7 +36,9 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
 
 ## Feature
 - [x] spinlock (2021-12-13)
-- [x] std.log and panic support (2021-12-13)
+- [ ] std.log and panic support
+    - [x] UART Driver (2021-12-13)
+    - [ ] initialize using the device tree info
 - [x] migrate to OpenSBI
     - [ ] ~~console related~~ (SBI v0.1 feature, deprecated in SBI specification v0.2 and above)
     - [x] shutdown (2021-12-14)
@@ -45,6 +47,7 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
     - [x] interrupt handler setup (2021-12-14)
     - [x] clock interrupt (2021-12-14)
 - [ ] physical memory management
+    - [x] device tree parsing (2021-12-16)
 - [ ] pagetable
 - [ ] proccess
 - [ ] proccess scheduling
@@ -64,5 +67,7 @@ Pretty much anything else related to system.
 - [https://github.com/rcore-os/rCore](https://github.com/rcore-os/rCore)
 - [https://github.com/mit-pdos/xv6-riscv](https://github.com/mit-pdos/xv6-riscv) xv6 from MIT re-written for RISC-V
 
-## License
-AGPL v3.0
+## Copyright
+`src/dtb` is a project from [@kivikakk](https://github.com/kivikakk/dtb.zig), by the time the code was copied in, the project is licensed under MIT license. All right reserved for [@kivikakk](https://github.com/kivikakk).
+
+All other files in this project are licensed under the AGPL-3.0 license.

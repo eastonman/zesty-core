@@ -1,4 +1,21 @@
-//! main entry of kernel
+// Zesty-Core
+// Copyright (C) 2021 EastonMan
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+//! Main entry of kernel
+//! Also the root of project
 
 const uart = @import("uart.zig");
 const arch = @import("arch/riscv64/riscv.zig");
@@ -7,6 +24,7 @@ const debug = @import("debug.zig");
 const irq_handler = @import("interrupt/handler.zig");
 const irq = @import("interrupt/interrupt.zig");
 const clock = @import("clock.zig");
+const hwinfo = @import("hwinfo.zig");
 const std = @import("std");
 const builtin = std.builtin;
 
@@ -14,7 +32,7 @@ const log_scope = enum {
     init,
 };
 
-export fn zig_main() noreturn {
+export fn zig_main(boot_hart_id: usize, flattened_device_tree: usize) noreturn {
 
     // No interrupt during initialization
     irq.disable();
@@ -29,6 +47,9 @@ export fn zig_main() noreturn {
     // Boot message
     uart.write("\n============= Booting Zesty-Core... ===============\n\n");
 
+    // Boot CPU ID
+    logger.info("Boot HART ID: {}", .{boot_hart_id});
+
     // Initial interrupt handling
     logger.info("Initializing IRQ...", .{});
     irq_handler.init(); // Interrupt Vector
@@ -41,6 +62,10 @@ export fn zig_main() noreturn {
     sbi.set_timer(1); // Set next timer to something other than 0 to activate timer
     irq.enable();
     logger.info("IRQ enabled.", .{});
+
+    // Parse Device Tree
+    hwinfo.init(flattened_device_tree);
+    logger.info("Configured with memory size: {} MiB", .{hwinfo.info.memory_size / 1024 / 1024});
 
     asm volatile ("ebreak");
 
