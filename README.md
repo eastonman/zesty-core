@@ -48,11 +48,13 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
     - [ ] ~~console related~~ (SBI v0.1 feature, deprecated in SBI specification v0.2 and above)
     - [x] shutdown (2021-12-14)
     - [x] hardware timer setup
-- [x] interrupt
+- [ ] interrupt
     - [x] interrupt handler setup (2021-12-14)
     - [x] clock interrupt (2021-12-14)
-- [ ] physical memory management
+    - [ ] other interrupt handlers
+- [x] physical memory management
     - [x] device tree parsing (2021-12-16)
+    - [x] xv6 alike linklist management (2021-12-16)
 - [ ] pagetable
 - [ ] proccess
 - [ ] proccess scheduling
@@ -63,6 +65,7 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
 ### What can be used
 - std.log
 - @panic
+- Some architecture independent datastructure container
 
 ### What can not be used
 Pretty much anything else related to system.
