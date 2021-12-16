@@ -1,4 +1,7 @@
+//! Spinlock
+
 const arch = @import("arch/riscv64/riscv.zig");
+const irq = @import("interrupt/interrupt.zig");
 
 // Spinlock Struct
 pub const Spinlock = struct {
@@ -26,9 +29,9 @@ pub const Spinlock = struct {
     /// Lock itself
     pub fn lock(self: *Spinlock) void {
         if (self.holding()) {
-            // TODO: Already holding lock, panic for safety, not implemented yet
+            @panic("lock already held");
         } else {
-            // TODO: disable IRQ
+            irq.disable(); // disable interrupts to avoid deadlock
             while (arch.__sync_lock_test_and_set(&self._lock, 1) == 0) {}
             arch.__sync_synchronize();
             self.hart = @intCast(i64, arch.hart_id()); // Set hart ID
@@ -41,9 +44,9 @@ pub const Spinlock = struct {
             self.hart = -1;
             arch.__sync_synchronize();
             arch.__sync_lock_release(&self._lock);
-            // TODO: enable IRQ
+            irq.enable(); // enable interrupts
         } else {
-            // TODO: panic
+            @panic("not holding lock");
         }
     }
 
