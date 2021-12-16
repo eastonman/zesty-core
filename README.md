@@ -22,11 +22,16 @@ Since Zig is still under development, the API of std library is not stablized, s
 
 By 2021-12-13, the upcoming Zig 0.9.0-dev is already breaking many std API and prevent the project from building.
 
-Some SBI feature used in the kernel is in SBi v0.3, So OpenSBI v0.9 and above is required.
+Some SBI feature used in the kernel is in SBI v0.3, So OpenSBI v0.9 and above is required.
 
 If you have installed QEMU 6.0.0+, OpenSBI v0.3 is already included.
 
 ### Build Command
+
+Currently, this project is tested against:
+- QEMU 6.2.0 
+- GCC 10.2 with target riscv64-unknown-elf
+- QEMU -machine virt
 
 ```
 zig build // Will build the project into build/
