@@ -25,6 +25,7 @@ const irq_handler = @import("interrupt/handler.zig");
 const irq = @import("interrupt/interrupt.zig");
 const clock = @import("clock.zig");
 const hwinfo = @import("hwinfo.zig");
+const vm = @import("vm/vm.zig");
 const std = @import("std");
 const builtin = std.builtin;
 
@@ -71,6 +72,8 @@ export fn zig_main(boot_hart_id: usize, flattened_device_tree: usize) noreturn {
     logger.info("Kernel binary size: {} KiB", .{(@ptrToInt(&kernel_end) - @ptrToInt(&kernel_start)) / 1024});
     logger.info("Configured with memory size: {} MiB", .{hwinfo.info.memory_size / 1024 / 1024});
 
+    vm.init();
+
     asm volatile ("ebreak");
 
     // while (true) {}
@@ -100,6 +103,7 @@ var panicking: usize = 0;
 
 // Hangs
 fn hang() noreturn {
+    irq.disable(); // Not allowed interrupt
     while (true) {}
 }
 

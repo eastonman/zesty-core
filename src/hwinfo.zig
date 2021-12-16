@@ -5,6 +5,7 @@ const fdt = @import("dtb/fdt.zig");
 const std = @import("std");
 
 const Hardware_Info = struct {
+    memory_start: usize = 0, // start of usable memory
     memory_size: u64 = 0,
 };
 
@@ -44,6 +45,7 @@ pub fn init(fdt_ptr: usize) void {
         }
     }
     if (reg_value) |value| {
+        info.memory_start = @byteSwap(u64, value[0]);
         info.memory_size = @byteSwap(u64, value[1]);
     }
 }

@@ -14,7 +14,10 @@ export fn zig_handler(context: *Context, scause: usize, stval: usize) void {
             context.sepc += 2; // magic number to bypass ebreak itself, see https://rcore-os.github.io/rCore-Tutorial-deploy/docs/lab-1/guide/part-6.html
         },
         IRQ_S_TIMER => clock.handle(),
-        else => @panic("IRQ handled!"),
+        else => {
+            std.log.err("Interrupt scause: {x}", .{scause});
+            @panic("Unknown interrupt");
+        },
     }
 }
 
