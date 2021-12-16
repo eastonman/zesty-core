@@ -32,6 +32,9 @@ const log_scope = enum {
     init,
 };
 
+extern const kernel_end: usize;
+extern const kernel_start: usize;
+
 export fn zig_main(boot_hart_id: usize, flattened_device_tree: usize) noreturn {
 
     // No interrupt during initialization
@@ -48,28 +51,29 @@ export fn zig_main(boot_hart_id: usize, flattened_device_tree: usize) noreturn {
     uart.write("\n============= Booting Zesty-Core... ===============\n\n");
 
     // Boot CPU ID
-    logger.info("Boot HART ID: {}", .{boot_hart_id});
+    logger.debug("Boot HART ID: {}", .{boot_hart_id});
 
     // Initial interrupt handling
-    logger.info("Initializing IRQ...", .{});
+    logger.debug("Initializing IRQ...", .{});
     irq_handler.init(); // Interrupt Vector
 
     clock.enable_clock_interrupt(); // Accept timer interrupt
-    logger.info("Clock IRQ initialized with {} Hz", .{arch.HZ});
+    logger.debug("Clock IRQ initialized with {} Hz", .{arch.HZ});
 
     // Done initializing interrupt
-    logger.info("Initialized IRQ.", .{});
+    logger.debug("Initialized IRQ.", .{});
     sbi.set_timer(1); // Set next timer to something other than 0 to activate timer
     irq.enable();
     logger.info("IRQ enabled.", .{});
 
     // Parse Device Tree
     hwinfo.init(flattened_device_tree);
+    logger.info("Kernel binary size: {} KiB", .{(@ptrToInt(&kernel_end) - @ptrToInt(&kernel_start)) / 1024});
     logger.info("Configured with memory size: {} MiB", .{hwinfo.info.memory_size / 1024 / 1024});
 
     asm volatile ("ebreak");
 
-    while (true) {}
+    // while (true) {}
 
     sbi.shutdown(); // No return for shutdown
 }
