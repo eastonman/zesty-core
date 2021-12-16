@@ -4,10 +4,15 @@
 >
 > Zesty begins with 'Z', which implies we are using Zig
 
+[![Zig Build Test](https://github.com/eastonman/zesty-core/actions/workflows/main.yml/badge.svg)](https://github.com/eastonman/zesty-core/actions/workflows/main.yml)
+
 Zesty-Core is a kernel written in [Zig](https://ziglang.org/), aiming to compatible with POSIX(May not be accomplished).
 
 Currently can only run on QEMU with `-machine virt`
 
+## Feature
+It currently only have kernel, and only print out some naive strings every second.
+It currently don't have any syscall support, and also no userspace development support.
 
 ## Build
 
@@ -21,6 +26,8 @@ Currently can only run on QEMU with `-machine virt`
 Since Zig is still under development, the API of std library is not stablized, so the exact same version of Zig is required.
 
 By 2021-12-13, the upcoming Zig 0.9.0-dev is already breaking many std API and prevent the project from building.
+
+Am planning to migrate to Zig 0.9.0.
 
 Some SBI feature used in the kernel is in SBI v0.3, So OpenSBI v0.9 and above is required.
 
@@ -39,7 +46,7 @@ zig build // Will build the project into build/
 zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 installed
 ```
 
-## Feature
+## RoadMap
 - [x] spinlock (2021-12-13)
 - [ ] std.log and panic support
     - [x] UART Driver (2021-12-13)
