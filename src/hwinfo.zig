@@ -12,11 +12,17 @@ const Hardware_Info = struct {
 pub var info: Hardware_Info = Hardware_Info{};
 
 pub fn init(fdt_ptr: usize) void {
+
+    // Caution, this struct is in Big Endian order, cannot be used if not transformed
     const fdt_header: fdt.FDTHeader = @intToPtr(*fdt.FDTHeader, fdt_ptr).*;
-    // const dtb_size = @byteSwap(u32, @intToPtr([*]u32, fdt_ptr)[1]);
+
+    // Do magic number check
+    if (std.mem.bigToNative(u32, fdt_header.magic) != fdt.FDTMagic) {
+        @panic("Device tree not found");
+    }
 
     var dtb_traverser: dtb.Traverser = undefined;
-    const dtb_content: []u8 = @intToPtr([*]u8, fdt_ptr)[0..fdt_header.totalsize];
+    const dtb_content: []u8 = @intToPtr([*]u8, fdt_ptr)[0..std.mem.bigToNative(u32, fdt_header.totalsize)];
     dtb_traverser.init(dtb_content) catch return;
 
     var state: enum {
