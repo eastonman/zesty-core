@@ -15,6 +15,8 @@ SECTIONS
 {
     . = BASE_ADDRESS;
     kernel_start = .;
+
+    . = ALIGN(4K); /* alignment  for page size 4k */
     text_start = .;
 
 
@@ -25,7 +27,7 @@ SECTIONS
         *(.text .text.*)
     }
 
-
+    . = ALIGN(4K); /* alignment  for page size 4k */
     rodata_start = .;
     .rodata : {
         *(.rodata .rodata.*)
@@ -46,16 +48,19 @@ SECTIONS
         __debug_ranges_end = .;
     }
 
+    . = ALIGN(4K); /* alignment  for page size 4k */
     data_start = .;
     .data : {
         *(.data .data.*)
     }
 
+    . = ALIGN(4K); /* alignment  for page size 4k */
     bss_start = .;
     .bss : {
         *(.bss .bss.*)
     }
 
+    . = ALIGN(4K); /* alignment  for page size 4k */
     kernel_end = .;
 
 
