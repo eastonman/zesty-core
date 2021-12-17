@@ -26,8 +26,9 @@ pub fn init() void {
     // Calculate the start and end of the usable memory
     const memory_start = utils.PAGE_ROUND_UP(@ptrToInt(&kernel_end));
     const memory_end = utils.PAGE_ROUND_DOWN(hwinfo.info.memory_start + hwinfo.info.memory_size);
-    logger.debug("Usable RAM start\t 0x{x}", .{memory_start});
-    logger.debug("Usable RAM ends\t 0x{x}", .{memory_end});
+    logger.debug("Usable RAM start\t 0x{x:0>16}", .{memory_start});
+    logger.debug("Usable RAM ends\t 0x{x:0>16}", .{memory_end});
+    logger.debug("Total usable RAM:\t {}MiB", .{(memory_end - memory_start) / 1024 / 1024});
 
     physical.init(memory_start, memory_end);
 

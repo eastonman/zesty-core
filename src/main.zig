@@ -69,7 +69,8 @@ export fn zig_main(boot_hart_id: usize, flattened_device_tree: usize) noreturn {
 
     // Parse Device Tree
     hwinfo.init(flattened_device_tree);
-    logger.info("Kernel binary size: {} KiB", .{(@ptrToInt(&kernel_end) - @ptrToInt(&kernel_start)) / 1024});
+    logger.debug("Kernel binary size: {} KiB", .{(@ptrToInt(&kernel_end) - @ptrToInt(&kernel_start)) / 1024});
+    logger.debug("Device tree location:\t 0x{x:0>16}", .{flattened_device_tree});
     logger.info("Configured with memory size: {} MiB", .{hwinfo.info.memory_size / 1024 / 1024});
 
     vm.init();
