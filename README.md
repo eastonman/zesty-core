@@ -6,7 +6,8 @@
 
 [![Zig Build Test](https://github.com/eastonman/zesty-core/actions/workflows/main.yml/badge.svg)](https://github.com/eastonman/zesty-core/actions/workflows/main.yml)
 
-Zesty-Core is a kernel written in [Zig](https://ziglang.org/), aiming to compatible with POSIX(May not be accomplished).
+Zesty-Core is a [RISC-V](https://riscv.org/) kernel written in [Zig](https://ziglang.org/), aiming to be compatible with [POSIX](https://docs.oracle.com/cd/E19048-01/chorus4/806-3328/6jcg1bm05/index.html) (may not be accomplished).
+
 
 Currently can only run on QEMU with `-machine virt`
 
@@ -56,7 +57,7 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
 - [ ] std.log and panic support
     - [x] UART Driver (2021-12-13)
     - [ ] initialize using the device tree info
-- [x] migrate to OpenSBI
+- [x] migrate to OpenSBI (see [SBI](docs/SBI.md))
     - [ ] ~~console related~~ (SBI v0.1 feature, deprecated in SBI specification v0.2 and above)
     - [x] shutdown (2021-12-14)
     - [x] hardware timer setup
