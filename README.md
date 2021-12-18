@@ -71,9 +71,17 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
     - [x] initial stage kernel pagetable (2021-12-18)
     - [x] enable paging (2021-12-18)
     - [ ] KPTI, **K**ernel **P**age-**T**able **I**solation
+    - [ ] user page table
 - [ ] proccess
+    - [ ] process structure
+    - [ ] context switching
+    - [ ] smp env setup
 - [ ] proccess scheduling
+    - [ ] clock interrupt scheduling
+    - [ ] schedule() function
 - [ ] syscall
+    - [ ] fork
+    - [ ] write
 
 ## Development
 
