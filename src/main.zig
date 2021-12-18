@@ -74,11 +74,17 @@ export fn zig_main(boot_hart_id: usize, flattened_device_tree: usize) noreturn {
     logger.info("Configured with memory size: {d} MiB", .{@intToFloat(f64, hwinfo.info.memory_size) / 1024 / 1024});
 
     vm.init();
+    vm.kernel_vm_init();
+    logger.debug("UART test: {x}", .{vm.translate_addr(@ptrCast([*]usize, vm.kernel_init_pagetable.?), @ptrToInt(vm.kernel_init_pagetable.?))});
+    // vm.vmprint(@ptrCast([*]usize, vm.kernel_init_pagetable.?));
+    vm.enable_paging();
+    logger.info("Memory paging enabled", .{});
 
     asm volatile ("ebreak");
 
-    // while (true) {}
+    while (true) {}
 
+    std.log.info("Shutting down", .{});
     sbi.shutdown(); // No return for shutdown
 }
 
@@ -94,9 +100,15 @@ pub fn log(
     // No need to check log level
     const scope_prefix = if (scope == .default) ": " else "(" ++ @tagName(scope) ++ "): ";
 
+    var time: [20]u8 = undefined;
+    const buffer = time[0..];
+    const time_str = std.fmt.bufPrint(buffer, "{d:>6}", .{@intToFloat(f64, clock.TICK) / @intToFloat(f64, arch.HZ)}) catch @panic("Unexpected format error in root.log");
     const prefix = "[" ++ @tagName(level) ++ "] " ++ scope_prefix;
 
     // Print the message to UART0, silently ignoring any errors
+    uart.write("[");
+    uart.write(time_str);
+    uart.write("] ");
     uart.print(prefix ++ format ++ "\n", args);
 }
 

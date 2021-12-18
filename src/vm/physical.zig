@@ -21,8 +21,8 @@ pub fn init(start_addr: usize, end_addr: usize) void {
     kmem_lock = spinlock.Spinlock.new("kmem_lock");
 
     // Start initialization
-    var current_addr = start_addr;
-    while (current_addr < end_addr - arch.PAGE_SIZE) : (current_addr += arch.PAGE_SIZE) {
+    var current_addr = end_addr - arch.PAGE_SIZE;
+    while (current_addr > start_addr) : (current_addr -= arch.PAGE_SIZE) {
         free(current_addr);
     }
 }
@@ -39,19 +39,34 @@ pub fn free(addr: usize) void {
     pool = r;
 }
 
-pub const OutOfMemoryError = error{};
-
-pub fn alloc() OutOfMemoryError!usize {
+/// alloc allocate a physical page 
+/// return empty if out of memory
+pub fn alloc() ?usize {
 
     // Lock the list
     kmem_lock.lock();
     defer kmem_lock.unlock();
 
-    var r = @intToPtr(*kmem_list_node, @ptrToInt(pool));
-    if (r == null) {
-        return OutOfMemoryError;
-    } else {
+    if (pool) |p| {
+        // Get one page
+        const r = p;
+        pool = p.next;
+
         // Fill the page with junk
-        @memset(@bitCast([*]u8, r), 5, arch.PAGE_SIZE);
+        @memset(@ptrCast([*]u8, r), 5, arch.PAGE_SIZE);
+
+        return @ptrToInt(r);
+    } else {
+        return null;
+    }
+}
+
+fn test_alloc() void {
+    const page = alloc();
+    if (page) |p| {
+        std.log.debug("page addr: {x}", .{p});
+        free(p);
+    } else {
+        @panic("allocate physical page failed");
     }
 }

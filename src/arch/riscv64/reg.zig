@@ -44,3 +44,10 @@ pub inline fn r_cycle() usize {
         : [ret] "=r" (-> usize)
     );
 }
+
+pub inline fn w_satp(a: usize) void {
+    asm volatile ("csrw satp, %[arg]"
+        :
+        : [arg] "r" (a)
+    );
+}

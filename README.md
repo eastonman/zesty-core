@@ -63,6 +63,7 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
     - [x] device tree parsing (2021-12-16)
     - [x] xv6 alike linklist management (2021-12-16)
 - [ ] pagetable
+    - [ ] initial stage kernel pagetable 
 - [ ] proccess
 - [ ] proccess scheduling
 - [ ] syscall
