@@ -12,7 +12,12 @@ Currently can only run on QEMU with `-machine virt`
 
 ## Feature
 It currently only have kernel, and only print out some naive strings every second.
+
 It currently don't have any syscall support, and also no userspace development support.
+
+It just don't have userspace!
+
+Hopefully by the time some of the system call is implemented, userspace development can simply use any libc implemention.
 
 ## Build
 
@@ -25,9 +30,9 @@ It currently don't have any syscall support, and also no userspace development s
 
 Since Zig is still under development, the API of std library is not stablized, so the exact same version of Zig is required.
 
-By 2021-12-13, the upcoming Zig 0.9.0-dev is already breaking many std API and prevent the project from building.
+By 2021-12-13, the upcoming Zig 0.9.0 is already breaking many std API and prevent the project from building.
 
-Am planning to migrate to Zig 0.9.0.
+Zig 0.9.0 is comming soon, and of course `Zesty-Core` is planning to migrate to Zig 0.9.0.
 
 Some SBI feature used in the kernel is in SBI v0.3, So OpenSBI v0.9 and above is required.
 
@@ -63,7 +68,9 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
     - [x] device tree parsing (2021-12-16)
     - [x] xv6 alike linklist management (2021-12-16)
 - [ ] pagetable
-    - [ ] initial stage kernel pagetable 
+    - [x] initial stage kernel pagetable (2021-12-18)
+    - [x] enable paging (2021-12-18)
+    - [ ] KPTI, **K**ernel **P**age-**T**able **I**solation
 - [ ] proccess
 - [ ] proccess scheduling
 - [ ] syscall

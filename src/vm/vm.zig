@@ -12,9 +12,11 @@ extern const kernel_start: usize;
 
 const logger = std.log.scoped(.memory);
 
-// SV39 mode, to avoid having to sign-extend virtual addresses
-// that have the high bit set.
+/// MAXVA is the maximum address for virtual address space
+/// SV39 mode, to avoid having to sign-extend virtual addresses
+/// that have the high bit set.
 const MAXVA: usize = (1 << (9 + 9 + 9 + 12 - 1));
+
 const pagetable_t = [*]usize;
 const pte_t = usize;
 
@@ -34,8 +36,8 @@ pub fn init() void {
     // Calculate the start and end of the usable memory
     const memory_start = utils.PAGE_ROUND_UP(@ptrToInt(&kernel_end));
     const memory_end = utils.PAGE_ROUND_DOWN(hwinfo.info.memory_start + hwinfo.info.memory_size);
-    logger.debug("Usable RAM start\t 0x{x:0>16}", .{memory_start});
-    logger.debug("Usable RAM ends\t 0x{x:0>16}", .{memory_end});
+    logger.debug("Usable RAM start:\t 0x{x:0>16}", .{memory_start});
+    logger.debug("Usable RAM end:\t 0x{x:0>16}", .{memory_end});
     logger.debug("Total usable RAM:\t {d}MiB", .{@intToFloat(f64, memory_end - memory_start) / 1024 / 1024});
 
     physical.init(memory_start, memory_end);
@@ -43,8 +45,10 @@ pub fn init() void {
     logger.info("Physical memory data structure initialized", .{});
 }
 
-pub var kernel_init_pagetable: ?*usize = null; // use optional type
+/// Kernel pagetable before KPTI enabled
+var kernel_init_pagetable: ?*usize = null; // use optional type
 
+/// kernel_vm_init initialize the kernel_init_pagetable during initialization phase
 pub fn kernel_vm_init() void {
 
     // Initialize the kernel pagetable
@@ -98,7 +102,7 @@ pub fn kernel_vm_init() void {
 
 pub fn enable_paging() void {
     if (kernel_init_pagetable) |pagetable| {
-        logger.debug("pagetable: {x}", .{@ptrToInt(pagetable)});
+        logger.debug("Enabling paging for pagetable at 0x{x:0>16}", .{@ptrToInt(pagetable)});
         reg.w_satp(arch.MAKE_SATP(@ptrToInt(pagetable)));
         arch.flush_tlb();
     } else {
