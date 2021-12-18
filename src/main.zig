@@ -38,6 +38,7 @@ extern const kernel_start: usize;
 
 export fn zig_main(boot_hart_id: usize, flattened_device_tree: usize) noreturn {
 
+    // TODO: panic if HZ value is unreasonable
     // No interrupt during initialization
     irq.disable();
 
