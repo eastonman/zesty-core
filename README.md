@@ -57,7 +57,7 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
 - [ ] std.log and panic support
     - [x] UART Driver (2021-12-13)
     - [ ] initialize using the device tree info
-- [x] migrate to OpenSBI (see [SBI](docs/SBI.md))
+- [x] migrate to OpenSBI (see [SBI](docs/SBI.md) in this project)
     - [ ] ~~console related~~ (SBI v0.1 feature, deprecated in SBI specification v0.2 and above)
     - [x] shutdown (2021-12-14)
     - [x] hardware timer setup

@@ -10,6 +10,7 @@ const reg = @import("../arch/riscv64/reg.zig");
 extern const kernel_end: usize;
 extern const kernel_start: usize;
 
+/// Global logger for this file
 const logger = std.log.scoped(.memory);
 
 /// MAXVA is the maximum address for virtual address space
@@ -100,10 +101,15 @@ pub fn kernel_vm_init() void {
     );
 }
 
+/// enable_paging setup paging for initialization-time paging
 pub fn enable_paging() void {
     if (kernel_init_pagetable) |pagetable| {
         logger.debug("Enabling paging for pagetable at 0x{x:0>16}", .{@ptrToInt(pagetable)});
+
+        // Set CSR satp
         reg.w_satp(arch.MAKE_SATP(@ptrToInt(pagetable)));
+
+        // for safety
         arch.flush_tlb();
     } else {
         @panic("Kernel pagetable not initialized");
@@ -183,12 +189,15 @@ fn walk(pagetable: pagetable_t, virtual_addr: usize, alloc: bool) ?pte_t {
                     logger.err("allocate pagetable physical memory failed", .{});
                     @panic("Out of memory");
                 }
-            } // else do not return anything
+            } else {
+                return null;
+            }
         }
     }
     return @ptrToInt(&pg_iter[arch.PAGE_INDEX(0, virtual_addr)]);
 }
 
+/// translate_addr translate a virtual address to a physical address
 pub fn translate_addr(pagetable: pagetable_t, virtual_addr: usize) ?usize {
     const optional_pte = walk(pagetable, virtual_addr, false);
     if (optional_pte) |pte| {
@@ -196,6 +205,8 @@ pub fn translate_addr(pagetable: pagetable_t, virtual_addr: usize) ?usize {
     } else return null;
 }
 
+/// vmprint print out the pagetable
+/// for debug usage
 pub fn vmprint(pagetable: pagetable_t) void {
     logger.debug("page table 0x{x}", .{@ptrToInt(pagetable)});
     if (@ptrToInt(pagetable) == 0) {

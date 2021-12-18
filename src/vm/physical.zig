@@ -1,4 +1,4 @@
-//! Physical memory management interface
+//! Physical memory management
 
 const std = @import("std");
 const spinlock = @import("../spinlock.zig");
@@ -27,6 +27,7 @@ pub fn init(start_addr: usize, end_addr: usize) void {
     }
 }
 
+/// free one page
 pub fn free(addr: usize) void {
 
     // Lock the list
