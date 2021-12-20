@@ -64,7 +64,7 @@ pub fn kernel_vm_init() void {
     @memset(@ptrCast([*]u8, kernel_init_pagetable.?), 0, arch.PAGE_SIZE);
 
     // Map UART
-    direct_map(
+    directMap(
         @ptrCast([*]usize, kernel_init_pagetable.?),
         arch.memory_layout.UART0,
         arch.PAGE_SIZE,
@@ -73,7 +73,7 @@ pub fn kernel_vm_init() void {
     );
 
     // PLIC
-    direct_map(
+    directMap(
         @ptrCast([*]usize, kernel_init_pagetable.?),
         arch.memory_layout.PLIC,
         0x40_0000,
@@ -85,7 +85,7 @@ pub fn kernel_vm_init() void {
     const kernel_base = @ptrToInt(&kernel_start);
 
     // Map kernel image as read-only and executable
-    direct_map(
+    directMap(
         @ptrCast([*]usize, kernel_init_pagetable.?),
         kernel_base,
         memory_start - kernel_base,
@@ -94,7 +94,7 @@ pub fn kernel_vm_init() void {
     );
 
     // Map all other usable physical memory
-    direct_map(
+    directMap(
         @ptrCast([*]usize, kernel_init_pagetable.?),
         memory_start,
         hwinfo.info.memory_size + hwinfo.info.memory_start - memory_start,
@@ -104,7 +104,7 @@ pub fn kernel_vm_init() void {
 }
 
 /// enable_paging setup paging for initialization-time paging
-pub fn enable_paging() void {
+pub fn enablePaging() void {
     if (kernel_init_pagetable) |pagetable| {
         logger.debug("Enabling paging for pagetable at 0x{x:0>16}", .{@ptrToInt(pagetable)});
 
@@ -118,9 +118,9 @@ pub fn enable_paging() void {
     }
 }
 
-/// direct_map map the physical memory to virtual memory
+/// directMap map the physical memory to virtual memory
 /// the start and the end must be page start
-fn direct_map(pagetable: pagetable_t, start: usize, size: usize, permission: usize, allow_remap: bool) void {
+fn directMap(pagetable: pagetable_t, start: usize, size: usize, permission: usize, allow_remap: bool) void {
     map_pages(pagetable, start, start, size, permission, allow_remap);
 }
 

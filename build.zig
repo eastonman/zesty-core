@@ -45,6 +45,8 @@ pub fn build(b: *std.build.Builder) void {
         "4", // CPUS
         "-kernel",
         kernel.getOutputPath(),
+        "-m",
+        "128M",
     };
 
     const qemu = b.addSystemCommand(&qemu_params);

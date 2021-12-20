@@ -82,7 +82,7 @@ export fn zig_main(boot_hart_id: usize, flattened_device_tree: usize) noreturn {
         vm.kernel_vm_init(); // Build kernel pagetable
 
         // Enable paging
-        vm.enable_paging();
+        vm.enablePaging();
         logger.info("Memory paging enabled", .{});
 
         asm volatile ("ebreak");
