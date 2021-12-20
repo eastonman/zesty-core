@@ -90,6 +90,61 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
 
 ## Development
 
+### Environment
+
+Tools required:
+- riscv-gnu-toolchain
+- qemu (build with riscv64)
+
+#### GNU toolchain
+Clone
+
+```
+$ git clone --recursive https://github.com/riscv/riscv-gnu-toolchain
+```
+
+Install
+
+```
+$ cd riscv-gnu-toolchain
+$ sudo ./configure --prefix=/usr/local
+$ sudo make
+```
+
+notice: this will install the toolchain into /usr/local, you can change to install location as you wish, but you will need to add it to you `$PATH` mannually.
+
+#### QEMU
+
+Download, at least QEMU 6.0.0 is required
+
+```
+$ wget https://download.qemu.org/qemu-6.2.0.tar.xz
+$ tar xf qemu-6.2.0.tar.xz
+```
+
+Install
+
+```
+$ cd qemu-6.2.0
+$ sudo ./configure --disable-kvm --disable-werror --prefix=/usr/local --target-list="riscv64-softmmu"
+$ sudo make
+$ sudo make install
+```
+
+#### Check Installation
+```
+$ riscv64-unknown-elf-gcc --version
+riscv64-unknown-elf-gcc (GCC) 10.2.0
+...
+
+$ qemu-system-riscv64 --version
+QEMU emulator version 6.2.0
+```
+
+#### How to exit QEMU
+Ctrl+A and then x, this will terminate QEMU.
+
+
 ### What can be used
 - std.log
 - @panic
