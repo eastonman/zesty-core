@@ -58,3 +58,6 @@ zig-out/
 
 # Build output
 build/
+
+# VSCode
+.vscode/

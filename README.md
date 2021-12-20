@@ -65,9 +65,12 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
     - [x] interrupt handler setup (2021-12-14)
     - [x] clock interrupt (2021-12-14)
     - [ ] other interrupt handlers
-- [x] physical memory management
+- [ ] physical memory management
     - [x] device tree parsing (2021-12-16)
     - [x] xv6 alike linklist management (2021-12-16)
+    - [x] buddy allocator (2021-12-20)
+    - [ ] std.mem.GerneralPurposeAllocator
+    - [ ] 2-stage initial
 - [ ] pagetable
     - [x] initial stage kernel pagetable (2021-12-18)
     - [x] enable paging (2021-12-18)
@@ -76,6 +79,7 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
 - [ ] proccess
     - [ ] process structure
     - [ ] context switching
+    - [ ] hart status management
     - [ ] smp env setup
 - [ ] proccess scheduling
     - [ ] clock interrupt scheduling
