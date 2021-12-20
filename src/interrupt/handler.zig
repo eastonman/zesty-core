@@ -22,7 +22,7 @@ export fn zig_handler(context: *Context, scause: usize, stval: usize) void {
         },
         IRQ_S_TIMER => clock.handle(),
         else => {
-            std.log.err("Interrupt scause: {x}", .{scause});
+            std.log.err("Interrupt scause: {x}, [sepc] = 0x{x:0>16}", .{ scause, context.sepc });
             @panic("Unknown interrupt");
         },
     }

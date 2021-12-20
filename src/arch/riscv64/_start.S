@@ -10,6 +10,7 @@ _start:
 
     # Setup Stack
     la sp, boot_stack_top
+    mv tp, a0
 
     call zig_main
 
@@ -18,7 +19,7 @@ _start:
 
 boot_stack:
     # 16K
-    .space 4096 * 16
+    .space 4096 * 4
 
 .global boot_stack_top
 boot_stack_top:

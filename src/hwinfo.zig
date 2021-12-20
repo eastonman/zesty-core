@@ -6,12 +6,19 @@ const std = @import("std");
 
 const Hardware_Info = struct {
     memory_start: usize = 0, // start of usable memory
+    dtb_memory_start: usize = 0, // start of device tree
     memory_size: u64 = 0,
+};
+
+const DTB_Node_Type = [][]const u8{
+    "memory",
+    "cpu@",
 };
 
 pub var info: Hardware_Info = Hardware_Info{};
 
 pub fn init(fdt_ptr: usize) void {
+    info.dtb_memory_start = fdt_ptr;
 
     // Caution, this struct is in Big Endian order, cannot be used if not transformed
     const fdt_header: fdt.FDTHeader = @intToPtr(*fdt.FDTHeader, fdt_ptr).*;

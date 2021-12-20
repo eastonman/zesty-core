@@ -37,58 +37,71 @@ extern const kernel_end: usize;
 extern const kernel_start: usize;
 
 export fn zig_main(boot_hart_id: usize, flattened_device_tree: usize) noreturn {
+    if (arch.hart_id() == boot_hart_id) {
+        // Yes I am the god chosen boot cpu
 
-    // TODO: panic if HZ value is unreasonable
-    // No interrupt during initialization
-    irq.disable();
+        // TODO: panic if HZ value is unreasonable
+        // No interrupt during initialization
+        irq.disable();
 
-    // Initialize logger
-    const logger = std.log.scoped(.init);
+        // Initialize logger
+        const logger = std.log.scoped(.init);
 
-    // Inital UART0
-    uart.uart = uart.Uart.new(arch.memory_layout.UART0);
-    uart.uart.init();
+        // Inital UART0
+        uart.uart = uart.Uart.new(arch.memory_layout.UART0);
+        uart.uart.init();
 
-    // Boot message
-    uart.write("\n============= Booting Zesty-Core... ===============\n\n");
+        // Boot message
+        uart.write("\n============= Booting Zesty-Core... ===============\n\n");
 
-    // Boot CPU ID
-    logger.debug("Boot HART ID: {}", .{boot_hart_id});
+        // Boot CPU ID
+        logger.debug("Boot HART ID: {}", .{boot_hart_id});
+        logger.debug("Init HART ID: {x}", .{arch.hart_id()});
 
-    // Initial interrupt handling
-    logger.debug("Initializing IRQ...", .{});
-    irq_handler.init(); // Interrupt Vector
+        // Initial interrupt handling
+        logger.debug("Initializing IRQ...", .{});
+        irq_handler.init(); // Interrupt Vector
 
-    clock.enable_clock_interrupt(); // Accept timer interrupt
-    logger.debug("Clock IRQ initialized with {} Hz", .{arch.HZ});
+        clock.enable_clock_interrupt(); // Accept timer interrupt
+        logger.debug("Clock IRQ initialized with {} Hz", .{arch.HZ});
 
-    // Done initializing interrupt
-    logger.debug("Initialized IRQ.", .{});
-    sbi.set_timer(1); // Set next timer to something other than 0 to activate timer
-    irq.enable();
-    logger.info("IRQ enabled.", .{});
+        // Done initializing interrupt
+        logger.debug("Initialized IRQ.", .{});
+        sbi.set_timer(1); // Set next timer to something other than 0 to activate timer
+        irq.enable();
+        logger.info("IRQ enabled.", .{});
 
-    // Parse Device Tree
-    hwinfo.init(flattened_device_tree);
-    logger.debug("Kernel binary size: {} KiB", .{(@ptrToInt(&kernel_end) - @ptrToInt(&kernel_start)) / 1024});
-    logger.debug("Device tree location:\t 0x{x:0>16}", .{flattened_device_tree});
-    logger.info("Configured with memory size: {d} MiB", .{@intToFloat(f64, hwinfo.info.memory_size) / 1024 / 1024});
+        // Parse Device Tree
+        hwinfo.init(flattened_device_tree);
+        logger.debug("Kernel binary size: {} KiB", .{(@ptrToInt(&kernel_end) - @ptrToInt(&kernel_start)) / 1024});
+        logger.debug("Device tree location:\t 0x{x:0>16}", .{flattened_device_tree});
+        logger.info("Configured with memory size: {d} MiB", .{@intToFloat(f64, hwinfo.info.memory_size) / 1024 / 1024});
 
-    // Prepare for paging
-    vm.init(); // Physical memory
-    vm.kernel_vm_init(); // Build kernel pagetable
+        // Prepare for paging
+        vm.init(); // Physical memory
+        vm.kernel_vm_init(); // Build kernel pagetable
 
-    // Enable paging
-    vm.enable_paging();
-    logger.info("Memory paging enabled", .{});
+        // Enable paging
+        vm.enable_paging();
+        logger.info("Memory paging enabled", .{});
 
-    asm volatile ("ebreak");
+        asm volatile ("ebreak");
 
-    while (true) {}
-
-    std.log.info("Shutting down", .{});
-    sbi.shutdown(); // No return for shutdown
+        while (true) {}
+        std.log.info("Shutting down", .{});
+        sbi.shutdown(); // No return for shutdown
+    } else {
+        // Oops, I have to wait for the boot cpu to finish
+        while (true) {}
+    }
 }
+
+/// Define root.log_level to override the default
+pub const log_level: std.log.Level = switch (std.builtin.mode) {
+    .Debug => .debug,
+    .ReleaseSafe => .debug,
+    .ReleaseFast, .ReleaseSmall => .info,
+};
 
 /// Implement root.log to override the std implementation
 /// See https://github.com/ziglang/zig/blob/0.8.x/lib/std/log.zig#L31-L54

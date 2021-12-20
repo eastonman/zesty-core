@@ -35,8 +35,10 @@ pub fn init() void {
     logger.debug("Start building memory data structure", .{});
 
     // Calculate the start and end of the usable memory
+    logger.debug("Kernel end: 0x{x:0>16}", .{&kernel_end});
     const memory_start = utils.PAGE_ROUND_UP(@ptrToInt(&kernel_end));
-    const memory_end = utils.PAGE_ROUND_DOWN(hwinfo.info.memory_start + hwinfo.info.memory_size);
+    const memory_end = utils.PAGE_ROUND_DOWN(hwinfo.info.dtb_memory_start);
+    // const memory_end = utils.PAGE_ROUND_DOWN(hwinfo.info.memory_start + hwinfo.info.memory_size);
     logger.debug("Usable RAM start:\t 0x{x:0>16}", .{memory_start});
     logger.debug("Usable RAM end:\t 0x{x:0>16}", .{memory_end});
     logger.debug("Total usable RAM:\t {d}MiB", .{@intToFloat(f64, memory_end - memory_start) / 1024 / 1024});

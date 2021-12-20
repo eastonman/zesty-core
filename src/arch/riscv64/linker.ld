@@ -52,16 +52,23 @@ SECTIONS
     data_start = .;
     .data : {
         *(.data .data.*)
+        *(.sdata .sdata.*)
+    }
+
+    . = ALIGN(4K); /* alignment  for page size 4k */
+    .stack : {
+        *(.bss.stack)
     }
 
     . = ALIGN(4K); /* alignment  for page size 4k */
     bss_start = .;
     .bss : {
         *(.bss .bss.*)
+        *(.sbss .sbss.*)
     }
 
     . = ALIGN(4K); /* alignment  for page size 4k */
-    kernel_end = .;
+    PROVIDE(kernel_end = .);
 
 
 }

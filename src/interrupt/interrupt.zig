@@ -2,6 +2,8 @@
 const reg = @import("../arch/riscv64/reg.zig");
 const std = @import("std");
 
+// TODO: move entry outside of subdirectory
+
 const SSTATUS_SIE = 1;
 
 /// Enable Interrupt
