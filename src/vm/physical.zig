@@ -7,21 +7,13 @@ const arch = @import("../arch/riscv64/riscv.zig");
 
 const log = std.log.scoped(.vm_physical);
 
-var kmem_lock: spinlock.Spinlock = undefined;
-
-/// The whole physical memory pool
-var pool: ?*kmem_list_node = null;
-
-/// Linked list node
-const kmem_list_node = struct {
-    next: ?*kmem_list_node,
-};
-
 /// init add the given range of pages to the buddy system
 /// @param start_addr must be rounded up to PAGE_SIZE
 pub fn init(start_addr: usize, end_addr: usize) void {
+
     // Initial buddy allocator
-    allocator.lock = spinlock.Spinlock.new("kmem_lock");
+    allocator.lock = spinlock.Spinlock.new("kmem_buddy_lock");
+    // Double linked list
     var i: usize = 0;
     while (i < MAX_ORDER) : (i += 1) {
         allocator.free_list[i].next = &allocator.free_list[i];
@@ -35,23 +27,19 @@ pub fn init(start_addr: usize, end_addr: usize) void {
     }
 
     // Start initialization
-    var current_addr = end_addr - arch.PAGE_SIZE;
-    while (current_addr > start_addr) : (current_addr -= arch.PAGE_SIZE) {
-        free(current_addr);
-    }
+    allocator.free(start_addr, end_addr - start_addr);
+
+    // Debug
     allocator.printFreeStats();
-    const apage = alloc();
-    const bpage = alloc();
-    free(apage.?);
-    free(bpage.?);
 }
 
 /// free one page
+/// use allocator api directly if more than one page
 pub fn free(addr: usize) void {
     allocator.free(addr, arch.PAGE_SIZE);
 }
 
-/// alloc allocate a physical page 
+/// alloc allocate one physical page 
 /// return empty if out of memory
 pub fn alloc() ?usize {
     return allocator.alloc(arch.PAGE_SIZE, 1); // 1 for no alignment
@@ -60,7 +48,7 @@ pub fn alloc() ?usize {
 /// page struct is stored in the first few bytes of the page
 const page = struct {
 
-    // these two pointer must bu initialized
+    // these two pointer must be initialized
     prev: *page = undefined,
     next: *page = undefined,
     ref_count: i64 = 0,
@@ -74,6 +62,8 @@ const page = struct {
 pub var allocator = buddyAllocator{};
 
 const MAX_ORDER = 11;
+
+/// Buddy allocator
 const buddyAllocator = struct {
     free_list: [MAX_ORDER]page = .{page{}} ** MAX_ORDER, // free list
     free_cnt: [MAX_ORDER]u64 = .{0} ** (MAX_ORDER), // count
@@ -134,7 +124,7 @@ const buddyAllocator = struct {
             @panic("size not aligned to page size");
         }
 
-        // free pages on by one
+        // free pages one by one
         // TODO: better way to do this
         var i: usize = 0;
         while (i < size) : (i += arch.PAGE_SIZE) {
@@ -184,6 +174,8 @@ const buddyAllocator = struct {
     }
 
     pub fn printFreeStats(self: @This()) void {
+        @setCold(true);
+
         for (self.free_cnt) |cnt, order| {
             log.debug("order: {}, cnt: {}, head: {*}", .{ order, cnt, self.free_list[order].next });
         }
