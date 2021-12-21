@@ -51,7 +51,7 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
 ```
 
 ## RoadMap
-- [ ] Zig 0.9.0 (2021-12-21)
+- [x] Zig 0.9.0 (2021-12-21)
 - [x] spinlock (2021-12-13)
 - [ ] std.log and panic support
     - [x] UART Driver (2021-12-13)
