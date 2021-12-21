@@ -1,6 +1,7 @@
 //! Physical memory management
 
 const std = @import("std");
+const builtin = @import("builtin");
 const math = std.math;
 const spinlock = @import("../spinlock.zig");
 const arch = @import("../arch/riscv64/riscv.zig");
@@ -21,7 +22,7 @@ pub fn init(start_addr: usize, end_addr: usize) void {
     }
 
     // Fill memory with junk when debugging
-    if (std.builtin.mode == .Debug) {
+    if (builtin.mode == .Debug) {
         log.debug("filling all memory with junk", .{});
         @memset(@intToPtr([*]u8, start_addr), 7, end_addr - start_addr - 1);
     }
@@ -183,8 +184,8 @@ const buddyAllocator = struct {
 };
 
 fn test_alloc() void {
-    const page = alloc();
-    if (page) |p| {
+    const _page = alloc();
+    if (_page) |p| {
         std.log.debug("page addr: {x}", .{p});
         free(p);
     } else {

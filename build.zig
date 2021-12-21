@@ -25,7 +25,9 @@ pub fn build(b: *std.build.Builder) void {
     kernel.setTarget(target);
     kernel.setOutputDir("build/");
     kernel.setBuildMode(mode);
-    kernel.setLinkerScriptPath("src/arch/riscv64/linker.ld");
+    kernel.setLinkerScriptPath(std.build.FileSource{
+        .path = "src/arch/riscv64/linker.ld",
+    });
 
     // Work around for https://www.sifive.com/blog/all-aboard-part-4-risc-v-code-models
     // see https://github.com/ziglang/zig/issues/5558
@@ -44,7 +46,7 @@ pub fn build(b: *std.build.Builder) void {
         "-smp",
         "4", // CPUS
         "-kernel",
-        kernel.getOutputPath(),
+        "build/zesty-core",
         "-m",
         "128M",
     };

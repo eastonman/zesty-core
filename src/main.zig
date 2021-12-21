@@ -20,14 +20,13 @@
 const uart = @import("uart.zig");
 const arch = @import("arch/riscv64/riscv.zig");
 const sbi = @import("arch/riscv64/opensbi.zig");
-const debug = @import("debug.zig");
 const irq_handler = @import("interrupt/handler.zig");
 const irq = @import("interrupt/interrupt.zig");
 const clock = @import("clock.zig");
 const hwinfo = @import("hwinfo.zig");
 const vm = @import("vm/vm.zig");
 const std = @import("std");
-const builtin = std.builtin;
+const builtin = @import("builtin");
 
 const log_scope = enum {
     init,
@@ -97,7 +96,7 @@ export fn zig_main(boot_hart_id: usize, flattened_device_tree: usize) noreturn {
 }
 
 /// Define root.log_level to override the default
-pub const log_level: std.log.Level = switch (std.builtin.mode) {
+pub const log_level: std.log.Level = switch (builtin.mode) {
     .Debug => .debug,
     .ReleaseSafe => .debug,
     .ReleaseFast, .ReleaseSmall => .info,
@@ -138,7 +137,7 @@ fn hang() noreturn {
 }
 
 /// Implement root.panic to overide the std implementation
-pub fn panic(message: []const u8, stack_trace: ?*builtin.StackTrace) noreturn {
+pub fn panic(message: []const u8, _: ?*std.builtin.StackTrace) noreturn {
     @setCold(true);
 
     // Very wrong
@@ -149,7 +148,7 @@ pub fn panic(message: []const u8, stack_trace: ?*builtin.StackTrace) noreturn {
 
     // Panic
     _ = @atomicRmw(usize, &panicking, .Add, 1, .SeqCst); // Atomic
-    std.log.emerg("KERNEL PANIC: {s}", .{message});
+    std.log.err("KERNEL PANIC: {s}", .{message});
 
     uart.write("\n");
     uart.write("\n");

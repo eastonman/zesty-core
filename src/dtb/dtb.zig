@@ -93,7 +93,7 @@ pub const Node = struct {
         allocator.destroy(node);
     }
 
-    pub fn format(node: Node, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+    pub fn format(node: Node, comptime _: []const u8, _: std.fmt.FormatOptions, writer: anytype) !void {
         try node.formatNode(writer, 0);
     }
 
@@ -122,7 +122,7 @@ pub const PropStatus = enum {
     Disabled,
     Fail,
 
-    pub fn format(status: PropStatus, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+    pub fn format(status: PropStatus, comptime _: []const u8, _: std.fmt.FormatOptions, writer: anytype) !void {
         switch (status) {
             .Okay => try writer.writeAll("okay"),
             .Disabled => try writer.writeAll("disabled"),
@@ -159,7 +159,7 @@ pub const Prop = union(enum) {
     Unresolved: PropUnresolved,
     Unknown: PropUnknown,
 
-    pub fn format(prop: Prop, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+    pub fn format(prop: Prop, comptime _: []const u8, _: std.fmt.FormatOptions, writer: anytype) !void {
         switch (prop) {
             .AddressCells => |v| try std.fmt.format(writer, "#address-cells: 0x{x:0>2}", .{v}),
             .SizeCells => |v| try std.fmt.format(writer, "#size-cells: 0x{x:0>2}", .{v}),
@@ -257,7 +257,7 @@ pub const Prop = union(enum) {
                 }
                 try writer.writeByte('>');
             },
-            .Unresolved => |v| try writer.writeAll("UNRESOLVED"),
+            .Unresolved => |_| try writer.writeAll("UNRESOLVED"),
             .Unknown => |v| try std.fmt.format(writer, "{'}: (unk {} bytes) <{}>", .{ std.zig.fmtEscapes(v.name), v.value.len, std.zig.fmtEscapes(v.value) }),
         }
     }
@@ -271,7 +271,7 @@ pub const Prop = union(enum) {
             try this.format("", .{}, writer);
         }
 
-        pub fn format(this: @This(), comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+        pub fn format(this: @This(), comptime _: []const u8, _: std.fmt.FormatOptions, writer: anytype) !void {
             if (this.freq / 1_000_000_000 > 0) {
                 try std.fmt.format(writer, "{d}GHz", .{@intToFloat(f32, this.freq / 1_000_000) / 1_000});
             } else if (this.freq / 1_000_000 > 0) {
@@ -292,7 +292,7 @@ pub const Prop = union(enum) {
             try this.format("", .{}, writer);
         }
 
-        pub fn format(this: @This(), comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+        pub fn format(this: @This(), comptime _: []const u8, _: std.fmt.FormatOptions, writer: anytype) !void {
             try writer.writeByte('"');
             for (this.string_list) |s, i| {
                 if (i != 0) {

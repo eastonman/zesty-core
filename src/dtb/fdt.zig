@@ -18,7 +18,7 @@ pub const FDTReserveEntry = packed struct {
     size: u64,
 };
 
-pub const FDTToken = packed enum(u32) {
+pub const FDTToken = enum(u32) {
     BeginNode = 0x00000001,
     EndNode = 0x00000002,
     Prop = 0x00000003,

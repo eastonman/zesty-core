@@ -1,6 +1,9 @@
 const std = @import("std");
-usingnamespace @import("util.zig");
-usingnamespace @import("fdt.zig");
+const structBigToNative = @import("util.zig").structBigToNative;
+const FDTHeader = @import("fdt.zig").FDTHeader;
+const FDTMagic = @import("fdt.zig").FDTMagic;
+const FDTToken = @import("fdt.zig").FDTToken;
+const FDTProp = @import("fdt.zig").FDTProp;
 
 pub const Error = error{
     Truncated,
@@ -55,7 +58,7 @@ pub const Traverser = struct {
 };
 
 /// Try to carefully extract the total size of an FDT at this address.
-pub fn totalSize(fdt: *c_void) Error!u32 {
+pub fn totalSize(fdt: *anyopaque) Error!u32 {
     const header_ptr = @ptrCast(*const FDTHeader, fdt);
 
     if (std.mem.bigToNative(u32, header_ptr.magic) != FDTMagic) {
@@ -176,14 +179,14 @@ const InternalTraverser = struct {
     }
 
     fn cstring(traverser: *@This()) []const u8 {
-        const length = std.mem.lenZ(@ptrCast([*c]const u8, traverser.fdt[traverser.offset..]));
+        const length = std.mem.len(@ptrCast([*c]const u8, traverser.fdt[traverser.offset..]));
         const value = traverser.fdt[traverser.offset .. traverser.offset + length];
         traverser.offset += length + 1;
         return value;
     }
 
     fn cstringFromSectionOffset(traverser: @This(), offset: usize) []const u8 {
-        const length = std.mem.lenZ(@ptrCast([*c]const u8, traverser.fdt[traverser.header.off_dt_strings + offset ..]));
+        const length = std.mem.len(@ptrCast([*c]const u8, traverser.fdt[traverser.header.off_dt_strings + offset ..]));
         return traverser.fdt[traverser.header.off_dt_strings + offset ..][0..length];
     }
 

@@ -8,7 +8,7 @@ const irq = @import("interrupt.zig");
 const IRQ_BREAKPOINT: u64 = 3;
 const IRQ_S_TIMER: u64 = (0b1 << 63) + 5;
 
-export fn zig_handler(context: *Context, scause: usize, stval: usize) void {
+export fn zig_handler(context: *Context, scause: usize, _: usize) void {
 
     // disable interrupts
     // TODO: allow some interrupts when available

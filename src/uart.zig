@@ -99,7 +99,7 @@ const WriteError = error{};
 
 const Uart_Writer = io.Writer(void, WriteError, write_bytes);
 const Uart_writer = @as(Uart_Writer, .{ .context = {} });
-fn write_bytes(context: void, bytes: []const u8) WriteError!usize {
+fn write_bytes(_: void, bytes: []const u8) WriteError!usize {
     write(bytes);
     return bytes.len;
 }
