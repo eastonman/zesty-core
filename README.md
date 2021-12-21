@@ -24,16 +24,14 @@ Hopefully by the time some of the system call is implemented, userspace developm
 
 ### Requirements
 
-- Zig==0.8.1
+- Zig==0.9.0
 - OpenSBI>=0.9
 
-**Require Zig 0.8.1 Exactly!**
+**Require Zig 0.9.0 Exactly!**
 
 Since Zig is still under development, the API of std library is not stablized, so the exact same version of Zig is required.
 
-By 2021-12-13, the upcoming Zig 0.9.0 is already breaking many std API and prevent the project from building.
-
-Zig 0.9.0 is comming soon, and of course `Zesty-Core` is planning to migrate to Zig 0.9.0.
+Since 2021-12-21, `Zesty-Core` had migrated to Zig 0.9.0.
 
 Some SBI feature used in the kernel is in SBI v0.3, So OpenSBI v0.9 and above is required.
 
@@ -53,6 +51,7 @@ zig build run // Will run the kernel with qemu, must have qemu-system-riscv64 in
 ```
 
 ## RoadMap
+- [ ] Zig 0.9.0 (2021-12-21)
 - [x] spinlock (2021-12-13)
 - [ ] std.log and panic support
     - [x] UART Driver (2021-12-13)
